@@ -1,13 +1,16 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Initialize Google Mobile Ads (uses test IDs below)
-  await MobileAds.instance.initialize();
+  if (AdHelper.isSupportedPlatform) {
+    // Initialize Google Mobile Ads (uses test IDs below)
+    await MobileAds.instance.initialize();
+  }
   runApp(const TalkSparkApp());
 }
 
@@ -160,26 +163,34 @@ class FavoritesScope extends InheritedNotifier<FavoritesStore> {
 ///
 /// Replace with your real AdMob unit IDs before publishing.
 class AdHelper {
-  static String bannerAdUnitId(TargetPlatform platform) {
-    switch (platform) {
+  static bool get isSupportedPlatform {
+    if (kIsWeb) return false;
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.android => true,
+      TargetPlatform.iOS => true,
+      _ => false,
+    };
+  }
+
+  static String get bannerAdUnitId {
+    switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return 'ca-app-pub-3940256099942544/6300978111';
       case TargetPlatform.iOS:
         return 'ca-app-pub-3940256099942544/2934735716';
       default:
-        // Fallback to Android test id for other platforms (debug only)
-        return 'ca-app-pub-3940256099942544/6300978111';
+        throw UnsupportedError('AdMob banners are only supported on mobile.');
     }
   }
 
-  static String interstitialUnitId(TargetPlatform platform) {
-    switch (platform) {
+  static String get interstitialUnitId {
+    switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return 'ca-app-pub-3940256099942544/1033173712';
       case TargetPlatform.iOS:
         return 'ca-app-pub-3940256099942544/4411468910';
       default:
-        return 'ca-app-pub-3940256099942544/1033173712';
+        throw UnsupportedError('AdMob interstitials are only supported on mobile.');
     }
   }
 }
@@ -198,8 +209,9 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _ad ??= BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId(Theme.of(context).platform),
+    if (!AdHelper.isSupportedPlatform || _ad != null) return;
+    _ad = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -209,7 +221,8 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
           setState(() => _loaded = false);
         },
       ),
-    )..load();
+    )
+      ..load();
   }
 
   @override
@@ -220,7 +233,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_loaded || _ad == null) {
+    if (!AdHelper.isSupportedPlatform || !_loaded || _ad == null) {
       return const SizedBox(height: 0);
     }
     return SizedBox(
@@ -237,12 +250,21 @@ class InterstitialController {
 
   Future<void> load(BuildContext context) async {
     if (_loading || _ad != null) return;
+    if (!AdHelper.isSupportedPlatform) return;
     _loading = true;
     await InterstitialAd.load(
-      adUnitId: AdHelper.interstitialUnitId(Theme.of(context).platform),
+      adUnitId: AdHelper.interstitialUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+            },
+            onAdFailedToShowFullScreenContent: (ad, err) {
+              ad.dispose();
+            },
+          );
           _ad = ad;
           _loading = false;
         },
@@ -259,7 +281,11 @@ class InterstitialController {
     if (ad == null) return;
     _ad = null;
     await ad.show();
-    ad.dispose();
+  }
+
+  void dispose() {
+    _ad?.dispose();
+    _ad = null;
   }
 }
 
@@ -479,6 +505,7 @@ class _PromptScreenState extends State<PromptScreen> {
 
   @override
   void dispose() {
+    _interstitial.dispose();
     super.dispose();
   }
 
