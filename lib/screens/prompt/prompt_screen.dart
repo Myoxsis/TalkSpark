@@ -94,6 +94,7 @@ class _PromptScreenState extends State<PromptScreen> {
           const SizedBox(width: 8),
         ],
       ),
+      bottomNavigationBar: const BannerAdBottomBar(),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: Brand.backgroundGradient,
@@ -189,11 +190,10 @@ class _PromptScreenState extends State<PromptScreen> {
                 onPressed: hasPrompts ? _nextPrompt : null,
               ),
               const SizedBox(height: 12),
-              const BannerAdWidget(),
-              ],
-            ),
+            ],
           ),
         ),
+      ),
     );
   }
 }

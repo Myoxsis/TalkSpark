@@ -62,6 +62,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: const BannerAdBottomBar(),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: Brand.backgroundGradient,
@@ -133,12 +134,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
-                  child: Center(
-                    child: BannerAdWidget(),
-                  ),
-                ),
+                child: SizedBox(height: 16),
               ),
             ],
           ),
