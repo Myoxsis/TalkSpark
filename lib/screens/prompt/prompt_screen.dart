@@ -22,6 +22,7 @@ class _PromptScreenState extends State<PromptScreen> {
   late final List<String> _items;
   late final Random _rng;
   late final InterstitialController _interstitial;
+  late final bool _hasPrompts;
 
   int _index = 0;
   int _nextCount = 0;
@@ -32,6 +33,7 @@ class _PromptScreenState extends State<PromptScreen> {
     _items = List<String>.from(kPrompts[widget.category] ?? const []);
     _rng = Random();
     _index = _items.isNotEmpty ? _rng.nextInt(_items.length) : 0;
+    _hasPrompts = _items.isNotEmpty;
     _interstitial = InterstitialController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _interstitial.load(context);
@@ -61,9 +63,11 @@ class _PromptScreenState extends State<PromptScreen> {
   @override
   Widget build(BuildContext context) {
     final favorites = FavoritesScope.of(context);
-    final id = promptId(widget.category, _index);
-    final prompt = _items.isEmpty ? 'No prompts found.' : _items[_index];
-    final isFavorite = favorites.contains(id);
+    final hasPrompts = _hasPrompts;
+    final String? id = hasPrompts ? promptId(widget.category, _index) : null;
+    final String? prompt = hasPrompts ? _items[_index] : null;
+    final bool isFavorite = id != null && favorites.contains(id);
+    final promptText = prompt ?? 'No prompts found.';
     final mediaPadding = MediaQuery.of(context).padding;
     final topOffset = mediaPadding.top + kToolbarHeight + 12;
     final bottomOffset = mediaPadding.bottom + 20;
@@ -79,12 +83,13 @@ class _PromptScreenState extends State<PromptScreen> {
             icon: Icon(
               isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
             ),
-            onPressed: () => favorites.toggle(id),
+            onPressed: id != null ? () => favorites.toggle(id) : null,
           ),
           IconButton(
             tooltip: 'Share',
             icon: const Icon(Icons.share_rounded),
-            onPressed: () => Share.share('"$prompt" — via TalkSpark'),
+            onPressed:
+                prompt != null ? () => Share.share('"$prompt" — via TalkSpark') : null,
           ),
           const SizedBox(width: 8),
         ],
@@ -134,7 +139,7 @@ class _PromptScreenState extends State<PromptScreen> {
                           ),
                           IconButton(
                             tooltip: 'Shuffle prompt',
-                            onPressed: _nextPrompt,
+                            onPressed: hasPrompts ? _nextPrompt : null,
                             icon: const Icon(Icons.casino_rounded),
                           ),
                         ],
@@ -160,7 +165,7 @@ class _PromptScreenState extends State<PromptScreen> {
                             key: ValueKey(_index),
                             physics: const BouncingScrollPhysics(),
                             child: Text(
-                              prompt,
+                              promptText,
                               textAlign: TextAlign.start,
                               style: Theme.of(context)
                                   .textTheme
@@ -181,7 +186,7 @@ class _PromptScreenState extends State<PromptScreen> {
               FilledButton.icon(
                 icon: const Icon(Icons.flash_on_rounded),
                 label: const Text('Next prompt'),
-                onPressed: _nextPrompt,
+                onPressed: hasPrompts ? _nextPrompt : null,
               ),
               const SizedBox(height: 12),
               const BannerAdWidget(),
