@@ -86,7 +86,7 @@ class TalkSparkApp extends StatelessWidget {
             ),
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: Brand.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),

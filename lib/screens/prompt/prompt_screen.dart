@@ -104,87 +104,87 @@ class _PromptScreenState extends State<PromptScreen> {
             children: [
               Expanded(
                 child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(28, 28, 28, 24),
-                    decoration: BoxDecoration(
-                      gradient: Brand.cardGradient,
-                      borderRadius: BorderRadius.circular(32),
-                      boxShadow: Brand.cardShadow,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Chip(
-                              label: Text(
-                                widget.category.toUpperCase(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      letterSpacing: 1.2,
-                                      fontWeight: FontWeight.w700,
-                                      color: Brand.secondary,
-                                    ),
-                              ),
-                              backgroundColor:
-                                  Brand.secondary.withOpacity(0.1),
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(28, 28, 28, 24),
+                  decoration: BoxDecoration(
+                    gradient: Brand.cardGradient,
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: Brand.cardShadow,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Chip(
+                            label: Text(
+                              widget.category.toUpperCase(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.w700,
+                                    color: Brand.secondary,
+                                  ),
                             ),
-                            IconButton(
-                              tooltip: 'Shuffle prompt',
-                              onPressed: _nextPrompt,
-                              icon: const Icon(Icons.casino_rounded),
+                            backgroundColor:
+                                Brand.secondary.withOpacity(0.1),
+                          ),
+                          IconButton(
+                            tooltip: 'Shuffle prompt',
+                            onPressed: _nextPrompt,
+                            icon: const Icon(Icons.casino_rounded),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Expanded(
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeInCubic,
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0, 0.05),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            switchInCurve: Curves.easeOutCubic,
-                            switchOutCurve: Curves.easeInCubic,
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0, 0.05),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              ),
-                            ),
-                            child: SingleChildScrollView(
-                              key: ValueKey(_index),
-                              physics: const BouncingScrollPhysics(),
-                              child: Text(
-                                prompt,
-                                textAlign: TextAlign.start,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      fontSize: 26,
-                                      height: 1.4,
-                                    ),
-                              ),
+                          ),
+                          child: SingleChildScrollView(
+                            key: ValueKey(_index),
+                            physics: const BouncingScrollPhysics(),
+                            child: Text(
+                              prompt,
+                              textAlign: TextAlign.start,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(
+                                    fontSize: 26,
+                                    height: 1.4,
+                                  ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  icon: const Icon(Icons.flash_on_rounded),
-                  label: const Text('Next prompt'),
-                  onPressed: _nextPrompt,
-                ),
-                const SizedBox(height: 12),
-                const BannerAdWidget(),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                icon: const Icon(Icons.flash_on_rounded),
+                label: const Text('Next prompt'),
+                onPressed: _nextPrompt,
+              ),
+              const SizedBox(height: 12),
+              const BannerAdWidget(),
               ],
             ),
           ),
