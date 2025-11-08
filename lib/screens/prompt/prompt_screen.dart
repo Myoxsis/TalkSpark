@@ -64,64 +64,130 @@ class _PromptScreenState extends State<PromptScreen> {
     final id = promptId(widget.category, _index);
     final prompt = _items.isEmpty ? 'No prompts found.' : _items[_index];
     final isFavorite = favorites.contains(id);
+    final mediaPadding = MediaQuery.of(context).padding;
+    final topOffset = mediaPadding.top + kToolbarHeight + 12;
+    final bottomOffset = mediaPadding.bottom + 20;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        titleSpacing: 24,
         title: Text(widget.category),
         actions: [
+          IconButton(
+            tooltip: isFavorite ? 'Remove favorite' : 'Save to favorites',
+            icon: Icon(
+              isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
+            ),
+            onPressed: () => favorites.toggle(id),
+          ),
           IconButton(
             tooltip: 'Share',
             icon: const Icon(Icons.share_rounded),
             onPressed: () => Share.share('"$prompt" — via TalkSpark'),
           ),
-          IconButton(
-            tooltip: isFavorite ? 'Remove favorite' : 'Save to favorites',
-            icon: Icon(isFavorite
-                ? Icons.star_rounded
-                : Icons.star_outline_rounded),
-            onPressed: () => favorites.toggle(id),
-          ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: Text(
-                    prompt,
-                    key: ValueKey(_index),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontSize: 24,
-                          height: 1.35,
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: Brand.backgroundGradient,
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            topOffset,
+            20,
+            bottomOffset,
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(28, 28, 28, 24),
+                    decoration: BoxDecoration(
+                      gradient: Brand.cardGradient,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: Brand.cardShadow,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Chip(
+                              label: Text(
+                                widget.category.toUpperCase(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                      letterSpacing: 1.2,
+                                      fontWeight: FontWeight.w700,
+                                      color: Brand.secondary,
+                                    ),
+                              ),
+                              backgroundColor:
+                                  Brand.secondary.withOpacity(0.1),
+                            ),
+                            IconButton(
+                              tooltip: 'Shuffle prompt',
+                              onPressed: _nextPrompt,
+                              icon: const Icon(Icons.casino_rounded),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 24),
+                        Expanded(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0, 0.05),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              ),
+                            ),
+                            child: SingleChildScrollView(
+                              key: ValueKey(_index),
+                              physics: const BouncingScrollPhysics(),
+                              child: Text(
+                                prompt,
+                                textAlign: TextAlign.start,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.copyWith(
+                                      fontSize: 26,
+                                      height: 1.4,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            FilledButton.icon(
-              icon: const Icon(Icons.flash_on_rounded),
-              label: const Text('Next prompt'),
-              style: FilledButton.styleFrom(
-                backgroundColor: Brand.primary,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(52),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  icon: const Icon(Icons.flash_on_rounded),
+                  label: const Text('Next prompt'),
+                  onPressed: _nextPrompt,
                 ),
-              ),
-              onPressed: _nextPrompt,
+                const SizedBox(height: 12),
+                const BannerAdWidget(),
+              ],
             ),
-            const SizedBox(height: 8),
-            const BannerAdWidget(),
-          ],
+          ),
         ),
       ),
     );
