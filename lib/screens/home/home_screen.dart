@@ -131,7 +131,9 @@ class HomeScreen extends StatelessWidget {
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
-                child: BannerAdWidget(),
+                child: Center(
+                  child: BannerAdWidget(),
+                ),
               ),
             ],
           ),
