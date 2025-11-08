@@ -60,6 +60,7 @@ class FavoritesScreen extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
+      bottomNavigationBar: const BannerAdBottomBar(),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: Brand.backgroundGradient,
@@ -75,15 +76,8 @@ class FavoritesScreen extends StatelessWidget {
               ? const EmptyFavoritesState()
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                  itemCount: entries.length + 1,
+                  itemCount: entries.length,
                   itemBuilder: (context, index) {
-                    if (index == entries.length) {
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 12),
-                        child: BannerAdWidget(),
-                      );
-                    }
-
                     final entry = entries[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 14),

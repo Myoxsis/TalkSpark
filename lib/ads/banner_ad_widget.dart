@@ -10,6 +10,23 @@ class BannerAdWidget extends StatefulWidget {
   State<BannerAdWidget> createState() => _BannerAdWidgetState();
 }
 
+class BannerAdBottomBar extends StatelessWidget {
+  const BannerAdBottomBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 12, top: 8),
+        child: Center(
+          child: BannerAdWidget(),
+        ),
+      ),
+    );
+  }
+}
+
 class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _ad;
   bool _loaded = false;
