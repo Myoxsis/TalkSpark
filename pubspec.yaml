@@ -1,0 +1,17 @@
+name: talkspark
+description: Offline conversation starter app with ads
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_mobile_ads: ^5.1.0
+  shared_preferences: ^2.3.2
+  share_plus: ^10.0.2
+
+flutter:
+  uses-material-design: true
