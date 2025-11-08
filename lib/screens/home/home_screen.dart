@@ -71,27 +71,29 @@ class HomeScreen extends StatelessWidget {
             top: topOffset,
             bottom: bottomOffset,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: AppHeader(),
-              ),
-              const SizedBox(height: 24),
-              Expanded(
+          child: CustomScrollView(
+            slivers: [
+              const SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GridView.builder(
-                    itemCount: categories.length + 1,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 18,
-                      crossAxisSpacing: 18,
-                      childAspectRatio: 0.95,
-                    ),
-                    itemBuilder: (context, index) {
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: AppHeader(),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 24),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverGrid(
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 18,
+                    crossAxisSpacing: 18,
+                    childAspectRatio: 0.95,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
                       if (index == 0) {
                         return CategoryCard(
                           label: 'Favorites',
@@ -126,13 +128,16 @@ class HomeScreen extends StatelessWidget {
                         ),
                       );
                     },
+                    childCount: categories.length + 1,
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
-                child: Center(
-                  child: BannerAdWidget(),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+                  child: Center(
+                    child: BannerAdWidget(),
+                  ),
                 ),
               ),
             ],
