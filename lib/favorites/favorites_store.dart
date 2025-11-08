@@ -3,14 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// A simple persistent store that tracks a user's favorite prompts.
 class FavoritesStore extends ChangeNotifier {
-  FavoritesStore._();
+  FavoritesStore._(this._prefs);
 
   static const _prefsKey = 'favorites';
   final Set<String> _ids = {};
+  final SharedPreferences _prefs;
 
   static Future<FavoritesStore> create() async {
-    final store = FavoritesStore._();
     final prefs = await SharedPreferences.getInstance();
+    final store = FavoritesStore._(prefs);
     final saved = prefs.getStringList(_prefsKey) ?? const <String>[];
     store._ids.addAll(saved);
     return store;
@@ -39,8 +40,7 @@ class FavoritesStore extends ChangeNotifier {
   }
 
   Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_prefsKey, _ids.toList());
+    await _prefs.setStringList(_prefsKey, _ids.toList());
     notifyListeners();
   }
 }
