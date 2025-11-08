@@ -3,38 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:talkspark/ads/banner_ad_widget.dart';
 import 'package:talkspark/app/brand.dart';
 import 'package:talkspark/data/prompts.dart';
-import 'package:talkspark/favorites/favorites_scope.dart';
-import 'package:talkspark/favorites/favorites_store.dart';
 import 'package:talkspark/screens/favorites/favorites_screen.dart';
 import 'package:talkspark/screens/prompt/prompt_screen.dart';
 import 'package:talkspark/widgets/app_header.dart';
 
 import 'widgets/category_card.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  FavoritesStore? _favorites;
-
-  @override
-  void initState() {
-    super.initState();
-    FavoritesStore.create().then((store) {
-      if (!mounted) return;
-      setState(() => _favorites = store);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final categories = kPrompts.keys.toList();
 
-    final scaffold = Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text(Brand.appName),
         centerTitle: true,
@@ -91,10 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-
-    final store = _favorites;
-    if (store == null) return scaffold;
-    return FavoritesScope(notifier: store, child: scaffold);
   }
 
   IconData _iconFor(String category) {
