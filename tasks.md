@@ -1,4 +1,4 @@
-### Android Manifest
+### Start Android Manifest
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
@@ -48,3 +48,5 @@
         </intent>
     </queries>
 </manifest>
+
+### End Android Manifest
